@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+	</head>
+
+	<body>
+		<center>概要<br>
+		XHCI(eXtensible Host Controller Interface)です<br>
+		OHCI, UHCI, およびEHCIの後継であり、USB1.x, 2.x, 3.xに対応しています<br>
+
+<br>
+		<br>操作概要<br>
+		主に仕様書4章の翻訳および必要箇所の抜粋<br>
+<br>
+		4.1 コマンド操作<br>
+		Command RingはxHCのコマンドやデバイススロットに関するコマンドを発行するためのもの 1つしかない<br>
+		Command Ring Control Registerは操作可能なレジスタスペースに定義(仕様書5.4.5参照)<br>
+<br>
+		全xHCのコマンドはCommand TRB(仕様書6.4.3参照)をCommand Ringに配置した後、Doorbellレジスタの<br>
+		DB TargetにxHCのコマンドコートを書き込むことで発生する(仕様書5.6参照)<br>
+<br>
+		全xHCのコマンドの結果はCommand Completion Event TRBを用いてEvent Ringに生成される<br>
+		Event TRBsは仕様書4.11.3参照<br>
+<br>
+		4.2 ホストコントローラーの初期化<br>
+		システムが起動したとき、ホストコントローラーが列挙された後、xHCのレジスタスペースに合わせ<br>
+		ベースのアドレスが割り当てられる。<br>
+		その後システムソフトウェアがFrame Length Adjustment(FLADJ)レジスタにシステム固有の値を設定する。<br>
+<br>
+		電源on後、ライトリセット後のレジスタの状態は仕様書4.23.1を参照(Power Wellsって何?)<br>
+<br>
+		MSI-Xを割り込み機構として使用し、システムソフトウェアがxHCを初期化するためには以下の操作を行います。<br>
+		(MSI/PINの割り込みの初期化及び使用についてはPCIの仕様を参照)<br>
+<br>
+		1.System I/O memory mapをサポートしているなら、先に初期化しておきます<br>
+		2.チップセットがリセット(PCIのリセット入力/xHCのパワーオンリセット入力)された後、<br>
+		  USBSTSのController Not Ready(CNR)フラグが0になるまで待ってから xHCのOperationalレジスタ/Runtimeレジスタに書き込む。<br>
+<br>
+		memo:上の操作は、USBCMDレジスタのRun/Stop(R/S)を1にする前に終わらせる必要がある<br>
+<br>
+		3.CONFIGレジスタ(仕様書5.4.7参照)のMax Device Slots Enabled(MaxSlotsEn)フィールドを書き込んで、<br>
+		  システムソフトウェアが使用するデバイススロットを有効にする<br>
+<br>
+		4.Device Context Base Address Array Pointer(DCBAAP)レジスタ(仕様書5.4.6参照)に<br>
+		  デバイスコンテキストベースアドレス配列のアドレス(64bit)を書き込みます<br>
+<br>
+		<br>参考文献<br>
+		実際に参考にしたIntelの仕様書<br>
+		<a href="https://www.intel.com/content/dam/www/public/us/en/documents/technical-specifications/extensible-host-controler-interface-usb-xhci.pdf">https://www.intel.com/content/dam/www/public/us/en/documents/technical-specifications/extensible-host-controler-interface-usb-xhci.pdf</a>
+		</center>
+	</body>
+</html>
