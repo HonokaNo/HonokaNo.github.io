@@ -45,6 +45,28 @@
 		4.Device Context Base Address Array Pointer(DCBAAP)レジスタ(仕様書5.4.6参照)に<br>
 		  デバイスコンテキストベースアドレス配列のアドレス(64bit)を書き込みます<br>
 <br>
+		5.Command Ring Control Register(仕様書5.4.5参照)にCommand Ringの最初のTRBの開始アドレスを指すアドレス(64bit)を書き込むことで、<br>
+		Command RingのDequeue Pointerを定義する。<br>
+<br>
+		6.割り込みを初期化する(これは任意 Event Ringをポーリングすることでも代用できる)<br>
+			1.MSI-X Message Table(仕様書5.2.8.3参照)を割り当て、初期化しMessage Addressとメッセージデータの設定、ベクタの有効化を行う<br>
+			  最低でも、table vector entry 0を初期化し有効化しておかなければいけない 詳しくはPCIの仕様を参照<br>
+<br>
+			2.MSI-X Pending Bit Array(PBA, 仕様書5.2.8.4)の割り当て、初期化を行う<br>
+<br>
+			3.MSI-X Capability構造体のTable OffsetをMSI-X Message Control Tableに、PBA OffsetsをPending Bit Arrayに設定する<br>
+<br>
+			4.MSI-X Capability構造体のMessage Control Register(仕様書5.2.8.3参照)を初期化する<br>
+<br>
+			5.アクティブになっているそれぞれの割り込みを初期化する<br>
+				1.Event Ringを定義する(Event Ringの管理は仕様書4.9.4参照)<br>
+<br>
+				2.Event Ring Segment Table(ERST 仕様書6.5参照)を割り当てる。その後ERSTを初期化し、Event Ring Segmentのサイズ(TRB単位)を定義する<br>
+<br>
+				3.Interrupter Event Ring Segment Table Size(ERSTSZ)レジスタ(仕様書5.5.2.3.1参照)に、Event Ring Segment Tableに記載されたセグメント数を書き込む<br>
+<br>
+				4.Interrupter Event Ring Dequeue Pointer(ERDP)レジスタ(仕様書5.5.2.3.3参照)にEvent Ring Segment Tableに記載された初めのセグメントの開始アドレスを書き込む<br>
+
 		<br>参考文献<br>
 		実際に参考にしたIntelの仕様書<br>
 		<a href="https://www.intel.com/content/dam/www/public/us/en/documents/technical-specifications/extensible-host-controler-interface-usb-xhci.pdf">https://www.intel.com/content/dam/www/public/us/en/documents/technical-specifications/extensible-host-controler-interface-usb-xhci.pdf</a>
